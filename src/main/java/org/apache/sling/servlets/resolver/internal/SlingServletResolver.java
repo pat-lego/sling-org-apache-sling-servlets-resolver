@@ -407,15 +407,45 @@ public class SlingServletResolver
     public void onEvent(final SlingRequestEvent event) {
         if ( event.getType() == SlingRequestEvent.EventType.EVENT_INIT ) {
             try {
+                LOGGER.debug("About to create RR for request {}", ((HttpServletRequest) event.getServletRequest()).getRequestURI());
+            } catch (Exception e) {
+                LOGGER.error("Failed to log INIT message", e);
+            }
+
+            try {
                 this.perThreadScriptResolver.set(this.sharedScriptResolver.clone(null));
             } catch (final LoginException e) {
                 LOGGER.error("Unable to create new script resolver clone", e);
             }
+
+            try {
+                LOGGER.debug("Created RR for request {}", ((HttpServletRequest) event.getServletRequest()).getRequestURI());
+            } catch (Exception e) {
+                LOGGER.error("Failed to complete log INIT message", e);
+            }
         } else if ( event.getType() == SlingRequestEvent.EventType.EVENT_DESTROY ) {
             final ResourceResolver resolver = this.perThreadScriptResolver.get();
+            try {
+                LOGGER.debug("About to DESTROY RR for request {}", ((HttpServletRequest) event.getServletRequest()).getRequestURI());
+            } catch (Exception e) {
+                LOGGER.error("Failed to log DESTROY message", e);
+            }
+
             if ( resolver != null ) {
                 this.perThreadScriptResolver.remove();
                 resolver.close();
+
+                try {
+                    LOGGER.debug("Destroyed RR for request {}", ((HttpServletRequest) event.getServletRequest()).getRequestURI());
+                } catch (Exception e) {
+                    LOGGER.error("Failed to complete log DESTROYED message", e);
+                }
+            }
+
+            try {
+                LOGGER.debug("Done the DESTROY EVENT for {}", ((HttpServletRequest) event.getServletRequest()).getRequestURI());
+            } catch (Exception e) {
+                LOGGER.error("Failed to finish complete log DESTROYED message", e);
             }
         }
     }
