@@ -440,6 +440,12 @@ public class SlingServletResolver
                 } catch (Exception e) {
                     LOGGER.error("Failed to complete log DESTROYED message", e);
                 }
+            } else {
+                try {
+                    LOGGER.debug("The RR for request was null, was unable to DESTROY RR for given request {}", ((HttpServletRequest) event.getServletRequest()).getRequestURI());
+                } catch (Exception e) {
+                    LOGGER.error("Failed to complete log DESTROYED message", e);
+                }
             }
 
             try {
